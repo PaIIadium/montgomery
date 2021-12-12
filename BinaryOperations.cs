@@ -36,18 +36,10 @@
             var quotient = new List<bool>();
             var currentBitIndex = 0;
             var intermediate = new List<bool>();
-            var number2List = new List<bool>(number2);
-            var isNeededZeroAtEnd = false;
+            var number2List = number2.ToList();
             while (currentBitIndex < number1.Count)
             {
                 var nextBit = number1[currentBitIndex];
-                if (intermediate.Count == 0 && !nextBit)
-                {
-                    quotient.Add(false);
-                    currentBitIndex++;
-                    continue;
-                }
-                
                 intermediate.Add(nextBit);
                 var comparingResult = Compare(intermediate, number2List);
                 if (comparingResult is 1 or 0)
@@ -58,22 +50,19 @@
                     {
                         intermediate.Clear();
                     }
-
-                    isNeededZeroAtEnd = false;
                 }
                 else
                 {
-                    isNeededZeroAtEnd = true;
+                    quotient.Add(false);
                 }
 
                 currentBitIndex++;
             }
 
-            if (isNeededZeroAtEnd) quotient.Add(false);
             if (intermediate.Count == 0) intermediate.Add(false);
             return new DivisionResult
             {
-                Quotient = quotient,
+                Quotient = quotient.SkipWhile(bit => !bit).ToList(),
                 Remainder = intermediate
             };
         }
