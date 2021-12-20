@@ -6,6 +6,9 @@
 
     public class BinaryOperations
     {
+        private static readonly List<bool> BinZero = new() {false};
+        private static readonly List<bool> BinOne = new() {true};
+        
         public static List<bool> Multiply(List<bool> number1, List<bool> number2)
         {
             var result = new bool[number1.Count + number2.Count];
@@ -36,20 +39,23 @@
             var quotient = new List<bool>();
             var currentBitIndex = 0;
             var intermediate = new List<bool>();
-            var number2List = number2.ToList();
             while (currentBitIndex < number1.Count)
             {
                 var nextBit = number1[currentBitIndex];
-                intermediate.Add(nextBit);
-                var comparingResult = Compare(intermediate, number2List);
+                if (Compare(intermediate, BinZero) == 0)
+                {
+                    if (nextBit) intermediate[0] = true;
+                }
+                else
+                {
+                    intermediate.Add(nextBit);
+                }
+                
+                var comparingResult = Compare(intermediate, number2);
                 if (comparingResult is 1 or 0)
                 {
                     quotient.Add(true);
                     intermediate = Subtract(intermediate, number2);
-                    if (intermediate.Count == 1 && !intermediate[0])
-                    {
-                        intermediate.Clear();
-                    }
                 }
                 else
                 {
@@ -122,7 +128,14 @@
         
         public static List<bool> Subtract(List<bool> number1, List<bool> number2, List<bool> modulo = null)
         {
-            if (modulo != null && Compare(number1, number2) == -1) number1 = Add(number1, modulo); 
+            if (modulo != null && Compare(number1, number2) == -1)
+            {
+                var diff = Subtract(number2, number1);
+                var x = Divide(diff, modulo);
+                List<bool> cyclesCount;
+                cyclesCount = x.Remainder != BinZero ? Add(x.Quotient, BinOne) : x.Quotient;
+                number1 = Add(number1, Multiply(cyclesCount, modulo));
+            }
             var result = new bool[number1.Count];
             var index1 = number1.Count - 1;
             var index2 = number2.Count - 1;
@@ -152,6 +165,7 @@
 
         public static List<bool> DivideByBinaryPower(List<bool> number, int binaryPowerIndex)
         {
+            if (number.Count < binaryPowerIndex) return BinZero;
             return number.GetRange(0, number.Count - binaryPowerIndex);
         }
     }
