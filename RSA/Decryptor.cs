@@ -8,7 +8,7 @@
         public static string Decrypt(IKey key, List<bool> encryptedMessage)
         {
             var blockSize = key.Modulo.Count;
-
+            encryptedMessage = Align(encryptedMessage, key.Modulo.Count);
             var decryptedBits = new List<bool>();
             for (var i = 0; i < encryptedMessage.Count; i += blockSize)
             {
@@ -19,17 +19,20 @@
                 decryptedBits.AddRange(decryptedBlock);
             }
             
-            var alignedResult = Align(decryptedBits);
+            var alignedResult = Align(decryptedBits, 8);
             return Converters.BitsToString(alignedResult);
         }
 
-        private static List<bool> Align(List<bool> bits)
+        private static List<bool> Align(List<bool> bits, int length)
         {
-            const int byteLength = 8;
             var withoutFirstZeros = Tools.SkipFirstZeros(bits);
-            var residue = withoutFirstZeros.Count % byteLength;
-            var requiredSize = withoutFirstZeros.Count + (byteLength - residue);
-            Tools.PadWithZeros(withoutFirstZeros, requiredSize);
+            var residue = withoutFirstZeros.Count % length;
+            if (residue != 0)
+            {
+                var requiredSize = withoutFirstZeros.Count + (length - residue);
+                Tools.PadWithZeros(withoutFirstZeros, requiredSize);
+            }
+            
             return withoutFirstZeros;
         }
     }

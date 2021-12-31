@@ -117,6 +117,7 @@
 
         public static string BitsToString(List<bool> bits)
         {
+            bits = bits.ToList();
             var result = "";
             var residue = bits.Count % ByteLength;
             if (residue != 0)

@@ -12,8 +12,8 @@
         
         public static (PublicKey publicKey, PrivateKey privateKey) GenerateKeys()
         {
-            var randomPrime1 = PrimesGenerator.GeneratePrimeNumber(20);
-            var randomPrime2 = PrimesGenerator.GeneratePrimeNumber(20);
+            var randomPrime1 = PrimesGenerator.GeneratePrimeNumber(30);
+            var randomPrime2 = PrimesGenerator.GeneratePrimeNumber(30);
             var modulo = BO.Multiply(randomPrime1, randomPrime2);
             var phi = CalculateEulerFn(randomPrime1, randomPrime2);
             var publicExponent = Converters.DecimalToBinary(PublicExponent);
