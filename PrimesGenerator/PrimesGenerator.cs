@@ -7,7 +7,7 @@
     using ModularExponentiation;
     using BO = ModularExponentiation.BinaryOperations;
 
-    class Program
+    public class PrimesGenerator
     {
         private static readonly List<bool> BinOne = new() {true};
         private static readonly List<bool> BinTwo = new() {true, false};
@@ -20,7 +20,7 @@
             Console.WriteLine(Converters.BinaryToDecimal(primeNumber));
         }
 
-        private static List<bool> GeneratePrimeNumber(int bitsCount)
+        public static List<bool> GeneratePrimeNumber(int bitsCount)
         {
             var rangeStart = new List<bool>(new bool[bitsCount]) {[0] = true};
             var rangeEnd = new List<bool>(new bool[bitsCount]);

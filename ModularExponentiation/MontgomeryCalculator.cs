@@ -67,7 +67,7 @@
             return result;
         }
 
-        private static List<bool> Inverse(List<bool> a, List<bool> b)
+        public static List<bool> Inverse(List<bool> a, List<bool> b)
         {
             var modulo = b.ToList();
             var x = new List<bool> {false};

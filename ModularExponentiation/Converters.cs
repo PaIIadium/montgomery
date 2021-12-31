@@ -11,6 +11,7 @@
         private static readonly Dictionary<int, int> BinaryPowersLengths = new();
         private static readonly double Log2_10 = Math.Log2(10);
         private const int MaxBinaryPower = 2048;
+        private const int ByteLength = 8;
 
         public static void Initialize()
         {
@@ -97,6 +98,41 @@
                 if (comparingResult == 1) return binaryPowerIndex;
                 binaryPowerIndex++;
             }
+        }
+
+        public static List<bool> StringToBits(string str)
+        {
+            var result = new List<bool>(str.Length * ByteLength);
+            foreach (var character in str)
+            {
+                var decimalRepresentation = (byte) character;
+                var binaryRepresentation = DecimalToBinary(decimalRepresentation.ToString());
+                var binaryArray = new bool[ByteLength];
+                binaryRepresentation.CopyTo(binaryArray, ByteLength - binaryRepresentation.Count);
+                result.AddRange(binaryArray);
+            }
+
+            return result;
+        }
+
+        public static string BitsToString(List<bool> bits)
+        {
+            var result = "";
+            var residue = bits.Count % ByteLength;
+            if (residue != 0)
+            {
+                var additionalBits = new bool[ByteLength - residue];
+                bits.InsertRange(0, additionalBits);   
+            }
+
+            for (var i = 0; i < bits.Count; i += ByteLength)
+            {
+                var binaryCharacter = bits.GetRange(i, ByteLength);
+                var character = (char)byte.Parse(BinaryToDecimal(binaryCharacter));
+                result += character;
+            }
+
+            return result;
         }
     }
 }

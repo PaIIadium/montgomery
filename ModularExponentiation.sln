@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModularExponentiation", "Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimesGenerator", "PrimesGenerator\PrimesGenerator.csproj", "{28B257D3-D588-4E7A-85A6-0224E4974567}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSA", "RSA\RSA.csproj", "{DDE77E1B-41DD-4F72-8D29-06794C9B425C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{28B257D3-D588-4E7A-85A6-0224E4974567}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28B257D3-D588-4E7A-85A6-0224E4974567}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28B257D3-D588-4E7A-85A6-0224E4974567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDE77E1B-41DD-4F72-8D29-06794C9B425C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDE77E1B-41DD-4F72-8D29-06794C9B425C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDE77E1B-41DD-4F72-8D29-06794C9B425C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDE77E1B-41DD-4F72-8D29-06794C9B425C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
