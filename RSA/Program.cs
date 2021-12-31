@@ -13,7 +13,7 @@
             CertificationAuthority.Initialize();
             var (publicKey, privateKey) = KeysGenerator.GenerateKeys();
             var certificate = CertificationAuthority.MakeCertificate(publicKey, "Kuchin");
-
+            // certificate.UserName = "Anonimous"; // Uncomment to invalidate certificate
             if (CheckCertificate(certificate))
             {
                 var encryptedMsg = Encryptor.EncryptECB(certificate.PublicKey, "Hello world");
