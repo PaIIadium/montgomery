@@ -21,5 +21,18 @@
             if (result.Count == 0) result.Add(false);
             return result;
         }
+        
+        public static List<bool> Align(List<bool> bits, int length)
+        {
+            var withoutFirstZeros = Tools.SkipFirstZeros(bits);
+            var residue = withoutFirstZeros.Count % length;
+            if (residue != 0)
+            {
+                var requiredSize = withoutFirstZeros.Count + (length - residue);
+                PadWithZeros(withoutFirstZeros, requiredSize);
+            }
+            
+            return withoutFirstZeros;
+        }
     }
 }
