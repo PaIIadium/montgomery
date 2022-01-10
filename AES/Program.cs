@@ -14,7 +14,7 @@
 
         private static readonly RandomNumberGenerator RandomBytesGenerator = RandomNumberGenerator.Create();
 
-        private static void Main(string[] args)
+        private static void Entry(string[] args)
         {
             GaloisMultiplication.Initialize();
             

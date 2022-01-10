@@ -8,7 +8,7 @@
     
     public class MontgomeryCalculator
     {
-        private static void Entry(string[] args)
+        private static void Main(string[] args)
         {
             var a = args[0];
             var b = args[1];
@@ -24,6 +24,9 @@
             var modExp = ModularExponentiation(aBin, bBin, nBin);
             var decimalModExp = Converters.BinaryToDecimal(modExp);
             Console.WriteLine($"{a} ^ {b} (mod {n}) = {decimalModExp}");
+            var modExpClassic = ClassicAlgorithm.ModularExponentiation(aBin, bBin, nBin);
+            var decimalModExpClassic = Converters.BinaryToDecimal(modExpClassic);
+            Console.WriteLine($"{a} ^ {b} (mod {n}) = {decimalModExpClassic} (classic algorithm)");
         }
 
         public static List<bool> Multiply(List<bool> a, List<bool> b, List<bool> n)
