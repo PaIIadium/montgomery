@@ -8,6 +8,7 @@
     
     public class MontgomeryCalculator
     {
+        private static List<bool> cache;
         private static void Main(string[] args)
         {
             var a = args[0];
@@ -18,15 +19,14 @@
             var bBin = Converters.DecimalToBinary(b);
             var nBin = Converters.DecimalToBinary(n);
 
-            var product = Multiply(aBin, bBin, nBin);
-            var decimalProduct = Converters.BinaryToDecimal(product);
-            Console.WriteLine($"{a} * {b} (mod {n}) = {decimalProduct}");
-            var modExp = ModularExponentiation(aBin, bBin, nBin);
-            var decimalModExp = Converters.BinaryToDecimal(modExp);
-            Console.WriteLine($"{a} ^ {b} (mod {n}) = {decimalModExp}");
-            var modExpClassic = ClassicAlgorithm.ModularExponentiation(aBin, bBin, nBin);
-            var decimalModExpClassic = Converters.BinaryToDecimal(modExpClassic);
-            Console.WriteLine($"{a} ^ {b} (mod {n}) = {decimalModExpClassic} (classic algorithm)");
+            var iterationsCount = 1;
+            var nsMontgomery = PerformanceTester.Run(
+                () => ModularExponentiation(aBin, bBin, nBin), iterationsCount);
+            Console.WriteLine($"{a} ^ {b} (mod {n}). Ns per operation: {nsMontgomery} (Montgomery algorithm)");
+
+            var nsClassic = PerformanceTester.Run(
+                () => ClassicAlgorithm.ModularExponentiation(aBin, bBin, nBin), iterationsCount);
+            Console.WriteLine($"{a} ^ {b} (mod {n}). Ns per operation: {nsClassic} (classic algorithm)");
         }
 
         public static List<bool> Multiply(List<bool> a, List<bool> b, List<bool> n)
@@ -36,8 +36,8 @@
             var bResidue = FindNResidue(b, rIndex, n);
             var t = BO.Multiply(aResidue, bResidue);
             
-            var result = Calculate(t, rIndex, n);
-            return Calculate(result, rIndex, n);
+            var result = Calculate(t, rIndex, n, true);
+            return Calculate(result, rIndex, n, false);
         }
 
         private static List<bool> FindNResidue(List<bool> number, int rIndex, List<bool> modulo)
@@ -47,12 +47,21 @@
             return BO.Divide(product, modulo).Remainder;
         }
 
-        private static List<bool> Calculate(List<bool> t, int rIndex, List<bool> n)
+        private static List<bool> Calculate(List<bool> t, int rIndex, List<bool> n, bool caching)
         {
-            var rBinaryPower = GetBinaryPower(rIndex);
-            var inversedN = Inverse(n, rBinaryPower);
+            List<bool> minusInversedN;
+            if (cache != null)
+            {
+                minusInversedN = cache;
+            }
+            else
+            {
+                var rBinaryPower = GetBinaryPower(rIndex);
+                var inversedN = Inverse(n, rBinaryPower);
+                minusInversedN = BO.Subtract(rBinaryPower, inversedN);
+                if (caching) cache = minusInversedN;
+            }
             
-            var minusInversedN = BO.Subtract(rBinaryPower, inversedN);
             var k = FindRemainder(BO.Multiply(t, minusInversedN), rIndex);
             var result = BO.DivideByBinaryPower(BO.Add(t, BO.Multiply(k, n)), rIndex);
 
@@ -106,15 +115,15 @@
             foreach (var bit in exponent)
             {
                 var xSqr = BO.Multiply(x, x);
-                x = Calculate(xSqr, rIndex, modulo);
+                x = Calculate(xSqr, rIndex, modulo, true);
                 if (bit)
                 {
                     var xaProduct = BO.Multiply(x, aResidue);
-                    x = Calculate(xaProduct, rIndex, modulo);
+                    x = Calculate(xaProduct, rIndex, modulo, false);
                 }
             }
 
-            return Calculate(x, rIndex, modulo);
+            return Calculate(x, rIndex, modulo, false);
         }
     }
 
