@@ -22,6 +22,7 @@
                 }
             }
 
+            Cache = (0, BinOne);
             return result;
         }
 

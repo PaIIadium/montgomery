@@ -23,7 +23,7 @@
                     var index = i + j + 1;
                     var previousResult = result[index];
                     result[index] ^= bitProduct ^ overflow;
-                    overflow = Dictionaries.AdderTable[previousResult][bitProduct][overflow];
+                    overflow = OverflowCalculator.CalculateAdditionOverflow(previousResult, bitProduct, overflow);
                 }
 
                 if (overflow) result[i] = true;
@@ -110,7 +110,7 @@
                     lastNonZeroIndex = index1 + 1;
                 }
                 
-                overflow = Dictionaries.AdderTable[bit1][bit2][overflow];
+                overflow = OverflowCalculator.CalculateAdditionOverflow(bit1, bit2, overflow);
                 currentIndex--;
                 index1--;
                 index2--;
@@ -154,7 +154,7 @@
                     lastNonZeroIndex = index1;
                 }
                 
-                overflow = Dictionaries.SubtractorTable[bit1][bit2][overflow];
+                overflow = OverflowCalculator.CalculateSubtractionOverflow(bit1, bit2, overflow);
                 
                 index1--;
                 index2--;

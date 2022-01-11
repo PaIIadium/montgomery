@@ -13,6 +13,34 @@
         private const int MaxBinaryPower = 2048;
         private const int ByteLength = 8;
 
+        public static readonly Dictionary<char, byte> CharToByte = new()
+        {
+            {'0', 0},
+            {'1', 1},
+            {'2', 2},
+            {'3', 3},
+            {'4', 4},
+            {'5', 5},
+            {'6', 6},
+            {'7', 7},
+            {'8', 8},
+            {'9', 9}
+        };
+
+        public static readonly Dictionary<byte, char> ByteToChar = new()
+        {
+            {0, '0'},
+            {1, '1'},
+            {2, '2'},
+            {3, '3'},
+            {4, '4'},
+            {5, '5'},
+            {6, '6'},
+            {7, '7'},
+            {8, '8'},
+            {9, '9'}
+        };
+        
         public static void Initialize()
         {
             var value = "1";
@@ -35,7 +63,7 @@
             for (var i = number.Length - 1; i >= 0; i--)
             {
                 var digit = number[i];
-                var byteDigit = Dictionaries.CharToByte[digit];
+                var byteDigit = CharToByte[digit];
                 var resultDigit = (byte) (byteDigit * 2);
                 if (overflow) resultDigit += 1;
                 if (resultDigit >= 10)
@@ -47,7 +75,7 @@
                 {
                     overflow = false;
                 }
-                result[i + 1] = Dictionaries.ByteToChar[resultDigit];
+                result[i + 1] = ByteToChar[resultDigit];
             }
 
             if (overflow)

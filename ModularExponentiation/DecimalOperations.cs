@@ -36,7 +36,7 @@
             {
                 var char1 = number1[index1];
                 var char2 = index2 >= 0 ? number2[index2] : '0';
-                var sum = Dictionaries.CharToByte[char1] + Dictionaries.CharToByte[char2];
+                var sum = Converters.CharToByte[char1] + Converters.CharToByte[char2];
                 if (overflow) sum += 1;
                 if (sum >= 10)
                 {
@@ -50,7 +50,7 @@
                     if (sum != 0) lastNonZeroIndex = currentIndex;
                 }
                 
-                result[currentIndex] = Dictionaries.ByteToChar[(byte)sum];
+                result[currentIndex] = Converters.ByteToChar[(byte)sum];
                 currentIndex--;
                 index1--;
                 index2--;
@@ -91,7 +91,7 @@
                     if (delta != 0) lastNonZeroIndex = index1;
                 }
                 
-                result[index1] = Dictionaries.ByteToChar[(byte)delta];
+                result[index1] = Converters.ByteToChar[(byte)delta];
                 index1--;
                 index2--;
             }
