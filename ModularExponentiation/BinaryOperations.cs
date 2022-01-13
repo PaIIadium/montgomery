@@ -12,21 +12,23 @@
         public static List<bool> Multiply(List<bool> number1, List<bool> number2)
         {
             var result = new bool[number1.Count + number2.Count];
-            for (var i = number1.Count - 1; i >= 0; i--)
-            {
-                var bit1 = number1[i];
-                var overflow = false;
-                for (var j = number2.Count - 1; j >= 0; j--)
-                {
-                    var bit2 = number2[j];
-                    var bitProduct = bit1 & bit2;
-                    var index = i + j + 1;
-                    var previousResult = result[index];
-                    result[index] ^= bitProduct ^ overflow;
-                    overflow = OverflowCalculator.CalculateAdditionOverflow(previousResult, bitProduct, overflow);
-                }
 
-                if (overflow) result[i] = true;
+            for (var i = number2.Count - 1; i >= 0; i--)
+            {
+                if (number2[i])
+                {
+                    var overflow = false;
+                    for (var j = number1.Count - 1; j >= 0; j--)
+                    {
+                        var index = i + j + 1;
+                        var prevRes = result[index];
+                        
+                        result[index] ^= number1[j] ^ overflow;
+                        overflow = OverflowCalculator.CalculateAdditionOverflow(prevRes, number1[j], overflow);
+                    }
+
+                    if (overflow) result[i] = true;
+                }
             }
 
             var formattedResult = result.SkipWhile(bit => !bit).ToList();
