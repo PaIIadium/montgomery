@@ -11,20 +11,22 @@
         
         public static List<bool> Multiply(List<bool> number1, List<bool> number2)
         {
-            var result = new bool[number1.Count + number2.Count];
+            var number1Arr = number1.ToArray();
+            var number2Arr = number2.ToArray();
 
-            for (var i = number2.Count - 1; i >= 0; i--)
+            var result = new bool[number1Arr.Length + number2Arr.Length];
+            
+            for (var i = number2Arr.Length - 1; i >= 0; i--)
             {
-                if (number2[i])
+                if (number2Arr[i])
                 {
                     var overflow = false;
-                    for (var j = number1.Count - 1; j >= 0; j--)
+                    for (var j = number1Arr.Length - 1; j >= 0; j--)
                     {
                         var index = i + j + 1;
                         var prevRes = result[index];
-                        
-                        result[index] ^= number1[j] ^ overflow;
-                        overflow = OverflowCalculator.CalculateAdditionOverflow(prevRes, number1[j], overflow);
+                        result[index] ^= number1Arr[j] ^ overflow;
+                        overflow = OverflowCalculator.CalculateAdditionOverflow(prevRes, number1Arr[j], overflow);
                     }
 
                     if (overflow) result[i] = true;
