@@ -53,7 +53,6 @@
             var overflowBit = false;
             for (var i = result.Length - 1; i >= 0; i--)
             {
-                var resultInt = result[i];
                 var termInt = term[i];
                 unchecked
                 {
@@ -63,10 +62,9 @@
                         overflowBit = result[i] == 0;
                     }
 
-                    result[i] = resultInt + termInt;
+                    result[i] += termInt;
                     overflowBit = overflowBit || result[i] < termInt;
                 }
-                if (overflowBit) result[i - 1] += 1;
             }
         }
         
