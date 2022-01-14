@@ -209,7 +209,9 @@
                 baseIndex += UintSize;
             }
 
-            return res.SkipWhile(bit => !bit).ToList();
+            var resList = res.SkipWhile(bit => !bit).ToList();
+            if (resList.Count == 0) resList.Add(false);
+            return resList;
         }
     }
 }

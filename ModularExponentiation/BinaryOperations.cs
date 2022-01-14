@@ -142,35 +142,39 @@
             {
                 var diff = Subtract(number2, number1);
                 var x = Divide(diff, modulo);
-                List<bool> cyclesCount;
-                cyclesCount = x.Remainder != BinZero ? Add(x.Quotient, BinOne) : x.Quotient;
+                var cyclesCount = x.Remainder != BinZero ? Add(x.Quotient, BinOne) : x.Quotient;
                 number1 = Add(number1, Multiply(cyclesCount, modulo));
             }
-            var result = new bool[number1.Count];
-            var index1 = number1.Count - 1;
-            var index2 = number2.Count - 1;
-            var lastNonZeroIndex = index1;
-
-            var overflow = false;
-            while (index1 >= 0)
+            
+            var first = Converters.BinaryToUintArr(number1);
+            var second = Converters.BinaryToUintArr(number2);
+            
+            var secondCopy = new uint[first.Length];
+            second.CopyTo(secondCopy, first.Length - second.Length);
+        
+            SubtractFrom(first, secondCopy);
+            return Converters.UintArrToBinary(first);
+        }
+        
+        private static void SubtractFrom(uint[] result, uint[] subtractor)
+        {
+            var overflowBit = false;
+            for (var i = result.Length - 1; i >= 0; i--)
             {
-                var bit1 = number1[index1];
-                var bit2 = index2 >= 0 ? number2[index2] : false;
-                var delta = bit1 ^ bit2 ^ overflow;
-                result[index1] = delta;
-                
-                if (delta)
+                var subtractorInt = subtractor[i];
+                unchecked
                 {
-                    lastNonZeroIndex = index1;
-                }
-                
-                overflow = OverflowCalculator.CalculateSubtractionOverflow(bit1, bit2, overflow);
-                
-                index1--;
-                index2--;
-            }
+                    if (overflowBit)
+                    {
+                        result[i] -= 1;
+                        overflowBit = result[i] == 0xFFFFFFFFu;
+                    }
 
-            return new List<bool>(result[lastNonZeroIndex..]);
+                    var oldResult = result[i];
+                    result[i] -= subtractorInt;
+                    overflowBit = overflowBit || result[i] > oldResult;
+                }
+            }
         }
 
         public static List<bool> DivideByBinaryPower(List<bool> number, int binaryPowerIndex)
