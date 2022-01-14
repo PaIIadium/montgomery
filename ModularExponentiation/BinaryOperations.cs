@@ -9,33 +9,65 @@
         private static readonly List<bool> BinZero = new() {false};
         private static readonly List<bool> BinOne = new() {true};
         
-        public static List<bool> Multiply(List<bool> number1, List<bool> number2)
+        public static List<bool> Multiply(List<bool> firstBin, List<bool> secondBin)
         {
-            var number1Arr = number1.ToArray();
-            var number2Arr = number2.ToArray();
+            var first = Converters.BinaryToUintArr(firstBin);
+            var second = Converters.BinaryToUintArr(secondBin);
 
-            var result = new bool[number1Arr.Length + number2Arr.Length];
+            var result = new uint[first.Length + second.Length];
+            var firstCopy = new uint[result.Length];
+            first.CopyTo(firstCopy, result.Length - first.Length);
             
-            for (var i = number2Arr.Length - 1; i >= 0; i--)
+            for (var i = second.Length - 1; i >= 0; i--)
             {
-                if (number2Arr[i])
+                var secondInt = second[i];
+                for (var k = 31; k >= 0; k--)
                 {
-                    var overflow = false;
-                    for (var j = number1Arr.Length - 1; j >= 0; j--)
+                    var bit = Tools.GetBit(secondInt, k);
+                    if (bit)
                     {
-                        var index = i + j + 1;
-                        var prevRes = result[index];
-                        result[index] ^= number1Arr[j] ^ overflow;
-                        overflow = OverflowCalculator.CalculateAdditionOverflow(prevRes, number1Arr[j], overflow);
+                        AddTo(result, firstCopy);
                     }
-
-                    if (overflow) result[i] = true;
+                    ShiftByOne(firstCopy);
                 }
             }
+            return Converters.UintArrToBinary(result);
+        }
 
-            var formattedResult = result.SkipWhile(bit => !bit).ToList();
-            if (formattedResult.Count == 0) formattedResult.Add(false);
-            return formattedResult;
+        public static void ShiftByOne(uint[] num)
+        {
+            var previousShiftedBit = false;
+            for (var i = num.Length - 1; i >= 0; i--)
+            {
+                var chunk = num[i];
+                var currentShiftedBit = Tools.GetBit(chunk, 0);
+                chunk <<= 1;
+                if (previousShiftedBit) chunk += 1;
+                previousShiftedBit = currentShiftedBit;
+                num[i] = chunk;
+            }
+        }
+        
+        private static void AddTo(uint[] result, uint[] term)
+        {
+            var overflowBit = false;
+            for (var i = result.Length - 1; i >= 0; i--)
+            {
+                var resultInt = result[i];
+                var termInt = term[i];
+                unchecked
+                {
+                    if (overflowBit)
+                    {
+                        result[i] += 1;
+                        overflowBit = result[i] == 0;
+                    }
+
+                    result[i] = resultInt + termInt;
+                    overflowBit = overflowBit || result[i] < termInt;
+                }
+                if (overflowBit) result[i - 1] += 1;
+            }
         }
         
         public static DivisionResult Divide(List<bool> number1, List<bool> number2)

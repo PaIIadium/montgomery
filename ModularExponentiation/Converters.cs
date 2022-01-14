@@ -12,6 +12,7 @@
         private static readonly double Log2_10 = Math.Log2(10);
         private const int MaxBinaryPower = 2048;
         private const int ByteLength = 8;
+        const int UintSize = 32;
 
         public static readonly Dictionary<char, byte> CharToByte = new()
         {
@@ -162,6 +163,53 @@
             }
 
             return result;
+        }
+
+        public static uint[] BinaryToUintArr(List<bool> binary)
+        {
+            var copy = binary.ToList();
+            var uintCount = (int)Math.Ceiling(copy.Count / (float)UintSize);
+            PadWithZeros(copy, UintSize * uintCount);
+            var result = new uint[uintCount];
+            for (var i = 0; i < uintCount; i++)
+            {
+                var bits = copy.GetRange(i * UintSize, UintSize);
+                for (var j = 0; j < UintSize; j++)
+                {
+                    if (bits[j]) result[i] = Tools.SetBitAt(result[i], j);
+                }
+            }
+
+            return result;
+        } 
+        
+        private static void PadWithZeros(List<bool> bits, int requiredSize)
+        {
+            var remainingBitsCount = requiredSize - bits.Count;
+            if (remainingBitsCount != 0)
+            {
+                var additionalBits = new bool[remainingBitsCount];
+                bits.InsertRange(0, additionalBits);
+            }
+        }
+
+        public static List<bool> UintArrToBinary(uint[] uintArr)
+        {
+            var res = new bool[uintArr.Length * UintSize];
+            var baseIndex = 0;
+            for (var i = 0; i < uintArr.Length; i++)
+            {
+                var number = uintArr[i];
+                
+                for (var j = 0; j < UintSize; j++)
+                {
+                    res[baseIndex + j] = Tools.GetBit(number, j);
+                }
+
+                baseIndex += UintSize;
+            }
+
+            return res.SkipWhile(bit => !bit).ToList();
         }
     }
 }
