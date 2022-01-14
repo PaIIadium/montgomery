@@ -34,7 +34,7 @@
             return Converters.UintArrToBinary(result);
         }
 
-        public static void ShiftByOne(uint[] num)
+        private static void ShiftByOne(uint[] num)
         {
             var previousShiftedBit = false;
             for (var i = num.Length - 1; i >= 0; i--)
@@ -102,11 +102,13 @@
             }
 
             if (intermediate.Count == 0) intermediate.Add(false);
-            return new DivisionResult
+            var res = new DivisionResult
             {
                 Quotient = quotient.SkipWhile(bit => !bit).ToList(),
                 Remainder = intermediate
             };
+            if (res.Quotient.Count == 0) res.Quotient.Add(false);
+            return res;
         }
 
         public static int Compare(List<bool> number1, List<bool> number2)
@@ -124,42 +126,16 @@
 
         public static List<bool> Add(List<bool> number1, List<bool> number2)
         {
-            if (number1.Count < number2.Count) (number1, number2) = (number2, number1);
-            var resultLength = Math.Max(number1.Count, number2.Count) + 1;
-            var result = new bool[resultLength];
-            var currentIndex = result.Length - 1;
-            var index1 = number1.Count - 1;
-            var index2 = number2.Count - 1;
-            var lastNonZeroIndex = currentIndex;
+            var first = Converters.BinaryToUintArr(number1);
+            var second = Converters.BinaryToUintArr(number2);
+        
+            var result = new uint[Math.Max(first.Length, second.Length) + 1];
+            var secondCopy = new uint[result.Length];
+            second.CopyTo(secondCopy, result.Length - second.Length);
             
-            var overflow = false;
-            
-            while (currentIndex > 0)
-            {
-                var bit1 = number1[index1];
-                var bit2 = index2 >= 0 ? number2[index2] : false;
-                var sum = bit1 ^ bit2 ^ overflow;
-                result[currentIndex] = sum;
-                
-                if (sum)
-                {
-                    lastNonZeroIndex = index1 + 1;
-                }
-                
-                overflow = OverflowCalculator.CalculateAdditionOverflow(bit1, bit2, overflow);
-                currentIndex--;
-                index1--;
-                index2--;
-            }
-
-            if (overflow)
-            {
-                result[0] = true;
-                lastNonZeroIndex = 0;
-            }
-            
-
-            return new List<bool>(result[lastNonZeroIndex..]);
+            first.CopyTo(result, result.Length - first.Length);
+            AddTo(result, secondCopy);
+            return Converters.UintArrToBinary(result);
         }
         
         public static List<bool> Subtract(List<bool> number1, List<bool> number2, List<bool> modulo = null)
